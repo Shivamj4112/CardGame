@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingHorizontal="10dp"
+    android:background="@color/white"
+    tools:context=".MainActivity">
+
+    <!--    Player 1 -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginEnd="10dp"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="70dp"
+                android:layout_height="100dp"
+                android:src="@drawable/ic_player1" />
+
+            <TextView
+                android:id="@+id/tv_player1_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textStyle="bold|italic"/>
+        </LinearLayout>
+
+
+
+        <ImageView
+            android:id="@+id/iv_player1_card1"
+            android:layout_width="50dp"
+            android:layout_height="75dp"
+            android:scaleType="centerInside"
+            android:layout_marginEnd="5dp" />
+
+        <ImageView
+            android:id="@+id/iv_player1_card2"
+            android:layout_width="50dp"
+            android:layout_height="75dp"
+            android:scaleType="centerInside"
+            android:layout_marginEnd="5dp"/>
+
+        <ImageView
+            android:id="@+id/iv_player1_card3"
+            android:layout_width="50dp"
+            android:layout_height="75dp"
+            android:scaleType="centerInside"
+            android:layout_marginEnd="5dp"/>
+    </LinearLayout>
+
+    <!--    Player 2 -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+
+        <ImageView
+            android:id="@+id/iv_player2_card3"
+            android:layout_width="50dp"
+            android:layout_height="75dp"
+            android:scaleType="centerInside"
+            android:layout_marginStart="5dp"/>
+
+        <ImageView
+            android:id="@+id/iv_player2_card2"
+            android:layout_width="50dp"
+            android:layout_height="75dp"
+            android:scaleType="centerInside"
+            android:layout_marginStart="5dp"/>
+
+
+        <ImageView
+            android:id="@+id/iv_player2_card1"
+            android:layout_width="50dp"
+            android:layout_height="75dp"
+            android:scaleType="centerInside"
+            android:layout_marginStart="5dp"/>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="10dp"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="70dp"
+                android:layout_height="100dp"
+                android:src="@drawable/ic_player2"/>
+
+            <TextView
+                android:id="@+id/tv_player2_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textStyle="bold|italic"/>
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+
+    <!--    Player 3 -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/iv_player3_card3"
+            android:layout_width="50dp"
+            android:layout_height="75dp"
+            android:scaleType="centerInside"
+            android:layout_marginStart="5dp"/>
+
+        <ImageView
+            android:id="@+id/iv_player3_card2"
+            android:layout_width="50dp"
+            android:layout_height="75dp"
+            android:scaleType="centerInside"
+            android:layout_marginStart="5dp"/>
+
+        <ImageView
+            android:id="@+id/iv_player3_card1"
+            android:layout_width="50dp"
+            android:layout_height="75dp"
+            android:scaleType="centerInside"
+            android:layout_marginStart="5dp"/>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="10dp"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="70dp"
+                android:layout_height="100dp"
+                android:src="@drawable/ic_player3"/>
+
+            <TextView
+                android:id="@+id/tv_player3_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textStyle="bold|italic"/>
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <!--    Player 4 -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginEnd="10dp"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="70dp"
+                android:layout_height="100dp"
+                android:src="@drawable/ic_player4"/>
+
+            <TextView
+                android:id="@+id/tv_player4_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textStyle="bold|italic"/>
+        </LinearLayout>
+
+
+        <ImageView
+            android:id="@+id/iv_player4_card1"
+            android:layout_width="50dp"
+            android:layout_height="75dp"
+            android:scaleType="centerInside"
+            android:layout_marginEnd="5dp"/>
+
+
+        <ImageView
+            android:id="@+id/iv_player4_card2"
+            android:layout_width="50dp"
+            android:layout_height="75dp"
+            android:scaleType="centerInside"
+            android:layout_marginEnd="5dp"/>
+
+        <ImageView
+            android:id="@+id/iv_player4_card3"
+            android:layout_width="50dp"
+            android:layout_height="75dp"
+            android:scaleType="centerInside"
+            android:layout_marginStart="5dp"/>
+
+
+
+    </LinearLayout>
+
+    <!--    Play button-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/bt_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/play"
+            android:backgroundTint="#6750A4"/>
+
+        <ImageView
+            android:id="@+id/iv_card_distribution"
+            android:layout_width="50dp"
+            android:layout_height="75dp"
+            android:scaleType="centerInside"
+            android:visibility="gone"
+            android:src="@drawable/ic_deck_backside"/>
+
+        <ImageView
+            android:id="@+id/iv_card_distribution_background"
+            android:layout_width="50dp"
+            android:layout_height="75dp"
+            android:scaleType="centerInside"
+            android:visibility="gone"
+            android:src="@drawable/ic_deck_backside"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>
