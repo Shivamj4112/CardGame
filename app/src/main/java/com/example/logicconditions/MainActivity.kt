@@ -60,7 +60,6 @@ class MainActivity : AppCompatActivity() {
             playerImageViews.forEach { it.foreground = null }
 
             logPlayerCards(cardName)
-            determineWinner(cardName)
 
             GlobalScope.launch(Dispatchers.Main) {
                 for (i in cardName.indices) {
@@ -79,19 +78,20 @@ class MainActivity : AppCompatActivity() {
                             override fun onAnimationStart(animation: Animation?) {}
                             override fun onAnimationEnd(animation: Animation?) {
                                 imageView.setImageDrawable(createFromStream(image, imageName))
-                                imageView.foreground = getDrawable(R.drawable.card_border)
+                                    imageView.setImageDrawable(getDrawable(R.drawable.ic_deck_backside))
                                 image.close()
                             }
-
+//
                             override fun onAnimationRepeat(animation: Animation?) {}
                         })
 
                         ivCardDistribution.startAnimation(animation)
                         count++
                         if (count == 4) count = 0
-                        delay(1000)
+                        delay(300)
                     }
                 }
+                determineWinner(cardName)
                 ivCardDistribution.animation?.cancel()
                 it.visibility = View.VISIBLE
                 ivCardDistribution.visibility = View.GONE
@@ -149,7 +149,6 @@ class MainActivity : AppCompatActivity() {
                 cardName[player + players],
                 cardName[player + 2 * players]
             )
-//            Log.d("PlayerCards", "Player ${player + 1}: $playerCards")
         }
     }
 
@@ -172,7 +171,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     private fun calculatePlayerScore(cards: List<String>): Int {
         var score = 0
         for (card in cards) {
@@ -180,7 +178,6 @@ class MainActivity : AppCompatActivity() {
         }
         return score
     }
-
 
     private fun determineWinner(cardName: ArrayList<String>) {
         val players = 4
