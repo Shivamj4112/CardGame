@@ -1,7 +1,6 @@
 package com.example.logicconditions
 
 import android.content.Context
-import android.graphics.drawable.Drawable
 import android.graphics.drawable.Drawable.createFromStream
 import android.os.Bundle
 import android.util.Log
@@ -13,7 +12,7 @@ import android.view.animation.AnimationUtils
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.logicconditions.Util.flipImageView
+import com.example.logicconditions.Util.sequences
 import com.example.logicconditions.databinding.ActivityMainBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -50,9 +49,9 @@ class MainActivity : AppCompatActivity() {
             ivPlayer1Card2, ivPlayer2Card2, ivPlayer3Card2, ivPlayer4Card2,
             ivPlayer1Card3, ivPlayer2Card3, ivPlayer3Card3, ivPlayer4Card3,
 
-        )
+            )
 
-        val  playerStatus = arrayOf(
+        val playerStatus = arrayOf(
             binding.tvPlayer1Status,
             binding.tvPlayer2Status,
             binding.tvPlayer3Status,
@@ -93,7 +92,9 @@ class MainActivity : AppCompatActivity() {
                             override fun onAnimationStart(animation: Animation?) {}
                             override fun onAnimationEnd(animation: Animation?) {
 
-                                imageView.setImageDrawable(getDrawable(R.drawable.ic_deck_backside))
+//                                imageView.setImageDrawable(getDrawable(R.drawable.ic_deck_backside))
+                                imageView.setImageDrawable(createFromStream(image, imageName))
+//                                imageView.foreground = getDrawable(R.drawable.ic_deck_backside)
                                 image.close()
                             }
 
@@ -106,7 +107,7 @@ class MainActivity : AppCompatActivity() {
                         delay(300)
                     }
                 }
-                determineWinner(cardName,playerStatus)
+                determineWinner(cardName, playerStatus)
 
                 ivCardDistribution.animation?.cancel()
                 it.visibility = View.VISIBLE
@@ -136,11 +137,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
     fun getAllPlayingCardImageNames(context: Context): List<String> {
         try {
             val assetManager = context.assets
             val playingCardsDir = "playing_cards"
-            imageList = assetManager.list(playingCardsDir)!!.toList().shuffled() as ArrayList<String>
+            imageList =
+                assetManager.list(playingCardsDir)!!.toList().shuffled() as ArrayList<String>
             return imageList
         } catch (e: IOException) {
             e.printStackTrace()
@@ -170,21 +173,21 @@ class MainActivity : AppCompatActivity() {
         return randomCardName
     }
 
-    private fun getCardValue(cardName: String): Int {
+    private fun getCardNumericValue(cardName: String): Int {
         return when {
-            cardName.contains("ace", ignoreCase = true) -> 17
+            cardName.contains("ace", ignoreCase = true) -> 18
             cardName.contains("king", ignoreCase = true) -> 16
-            cardName.contains("queen", ignoreCase = true) -> 15
-            cardName.contains("jack", ignoreCase = true) -> 14
+            cardName.contains("queen", ignoreCase = true) -> 13
+            cardName.contains("jack", ignoreCase = true) -> 11
             cardName.contains("10") -> 10
             cardName.contains("9") -> 9
             cardName.contains("8") -> 8
             cardName.contains("7") -> 7
             cardName.contains("6") -> 6
-            cardName.contains("5") -> 5
-            cardName.contains("4") -> 4
-            cardName.contains("3") -> 3
-            cardName.contains("2") -> 2
+            cardName.contains("5") -> 1
+            cardName.contains("4") -> 1
+            cardName.contains("3") -> 1
+            cardName.contains("2") -> 1
             else -> 0
         }
     }
@@ -193,85 +196,74 @@ class MainActivity : AppCompatActivity() {
     private fun calculatePlayerScore(cards: List<String>): Int {
         var score = 0
         for (card in cards) {
-            score += getCardValue(card)
+            score += getCardNumericValue(card)
         }
         return score
     }
 
+
     private fun isPureSequence(cards: List<String>): Boolean {
         val suits = cards.map { it.substringAfterLast("_of_") }.toSet()
-        return suits.size == 1
+        return suits.size == 1 && isSequence(cards)
     }
 
+    private fun isSequence(cards: List<String>): Boolean {
+        val cardValues = cards.map { getCardNumericValue(it) }.sorted()
+        return cardValues[1] == cardValues[0] + 1 && cardValues[2] == cardValues[1] + 1
+    }
+
+
+    private fun getCardColor(card: String): String {
+        return card.substringAfterLast("_of_")
+    }
     private fun containsSequence(cards: List<String>, sequence: List<String>): Boolean {
-        val cardValues = cards.map { getCardValue(it) }.sorted()
-        val sequenceValues = sequence.map { getCardValue(it) }.sorted()
-        return cardValues == sequenceValues
+        val cardValues = cards.map { getCardNumericValue(it) }.toSet()
+        return sequence.any { sequence -> sequence.toSet() == cardValues }
     }
 
-    private fun isSameSuit(cards: List<String>): Boolean {
-        val suits = cards.map { it.substringAfterLast("_of_") }.toSet()
-        return suits.size == 1
+    private fun getCardValue(cardName: String): String {
+        return cardName.substringBefore("_of_")
     }
 
     private fun isDoublePair(cards: List<String>): Boolean {
         val valueCount = cards.groupingBy { getCardValue(it) }.eachCount()
         return valueCount.values.count { it == 2 } == 1
     }
+    private fun List<String>.containsSameElements(other: List<String>): Boolean {
+        if (this.size != other.size) return false
+        return this.sorted() == other.sorted()
+    }
 
     private fun checkSpecialCombinations(cards: List<String>): Int {
+        val colorCard = cards.groupingBy { getCardColor(it) }.eachCount()
+        val cardValue = cards.groupingBy { getCardValue(it) }.eachCount()
+
         if (isTrail(cards)) {
-            return 120 // Highest priority
-        }
-
-        val sequences = listOf(
-            listOf("queen", "king", "ace"),
-            listOf("jack", "queen", "king"),
-            listOf("10", "jack", "queen"),
-            listOf("ace", "2", "3"),
-            listOf("9", "10", "jack"),
-            listOf("8", "9", "10"),
-            listOf("7", "8", "9"),
-            listOf("6", "7", "8"),
-            listOf("5", "6", "7"),
-            listOf("4", "5", "6"),
-            listOf("3", "4", "5"),
-            listOf("2", "3", "4")
-        )
-
-        // Function to check if two lists contain the same elements irrespective of order
-        fun List<String>.containsSameElements(other: List<String>): Boolean {
-            if (this.size != other.size) return false
-            val thisSorted = this.sorted()
-            val otherSorted = other.sorted()
-            return thisSorted == otherSorted
+            return 150
         }
 
         if (isPureSequence(cards)) {
             for ((index, sequence) in sequences.withIndex()) {
                 if (cards.containsSameElements(sequence)) {
-                    return 90 + (sequences.size - index)
+                    return 100 + (sequences.size - index)
                 }
             }
         }
 
-        for ((index, sequence) in sequences.withIndex()) {
-            if (cards.containsSameElements(sequence)) {
-                return 70 + (sequences.size - index)
-            }
+        if (isSequence(cards)) {
+            return 90
         }
 
-        if (isSameSuit(cards)) {
-            return 50
+        if (colorCard.values.any { it == 3 }) {
+            return 80
         }
 
-        if (isDoublePair(cards)) {
-            return 40
+        if (cardValue.values.any{it == 2}) {
+            return 70 + getCardNumericValue(cardName.toString())
         }
 
         return calculatePlayerScore(cards)
     }
-
 
     private fun getCardRank(cardName: String): Int {
         return when {
@@ -284,16 +276,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun determineHighestCard(cards: List<String>): String {
-        return cards.maxWithOrNull(compareBy({ getCardValue(it) }, { getCardRank(it) })) ?: ""
+        return cards.maxWithOrNull(compareBy({ getCardNumericValue(it) }, { getCardRank(it) })) ?: ""
     }
 
     private fun compareCards(cards1: List<String>, cards2: List<String>): Int {
-        val sortedCards1 = cards1.sortedWith(compareBy({ getCardValue(it) }, { getCardRank(it) }))
-        val sortedCards2 = cards2.sortedWith(compareBy({ getCardValue(it) }, { getCardRank(it) }))
+        val sortedCards1 = cards1.sortedWith(compareBy({ getCardNumericValue(it) }, { getCardRank(it) }))
+        val sortedCards2 = cards2.sortedWith(compareBy({ getCardNumericValue(it) }, { getCardRank(it) }))
 
         for (i in sortedCards1.indices) {
-            val card1Value = getCardValue(sortedCards1[i])
-            val card2Value = getCardValue(sortedCards2[i])
+            val card1Value = getCardNumericValue(sortedCards1[i])
+            val card2Value = getCardNumericValue(sortedCards2[i])
             if (card1Value != card2Value) {
                 return card1Value - card2Value
             }
@@ -308,33 +300,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun isTrail(cards: List<String>): Boolean {
-        return cards.groupingBy { getCardValue(it) }.eachCount().values.all { it == 3 }
+        return cards.groupingBy { getCardNumericValue(it) }.eachCount().values.all { it == 3 }
     }
 
     private fun compareTrails(trail1: List<String>, trail2: List<String>): Int {
-        val value1 = getCardValue(trail1.first())
-        val value2 = getCardValue(trail2.first())
+        val value1 = getCardNumericValue(trail1.first())
+        val value2 = getCardNumericValue(trail2.first())
         return value1 - value2
     }
 
     private fun determineWinner(cardName: ArrayList<String>, playerStatus: Array<TextView>): Int {
 
-        val sequences = listOf(
-            listOf("queen", "king", "ace"),
-            listOf("jack", "queen", "king"),
-            listOf("10", "jack", "queen"),
-            listOf("ace", "2", "3"),
-            listOf("9", "10", "jack"),
-            listOf("8", "9", "10"),
-            listOf("7", "8", "9"),
-            listOf("6", "7", "8"),
-            listOf("5", "6", "7"),
-            listOf("4", "5", "6"),
-            listOf("3", "4", "5"),
-            listOf("2", "3", "4")
-        )
 
-        val players = 4
+        val players = cardName.size / 3
         val scores = IntArray(players)
         val highestCards = Array(players) { "" }
         val playerCardsList = Array(players) { listOf<String>() }
@@ -356,26 +334,52 @@ class MainActivity : AppCompatActivity() {
             isTrails[player] = isTrail(playerCards)
             isPureSequences[player] = isPureSequence(playerCards)
             isSequences[player] = sequences.any { containsSequence(playerCards, it) }
-            isSameSuits[player] = isSameSuit(playerCards)
             isDoublePairs[player] = isDoublePair(playerCards)
-            Log.d("TAG", "Player ${player + 1}, Player cards [${playerCards}] wins with score: ${scores[player]}")
+            Log.d(
+                "TAG",
+                "Player ${player + 1}, Player cards [${playerCards}] wins with score: ${scores[player]}"
+            )
         }
+        Log.d(
+            "TAG",
+            "---------------------------------------------------------------------------------------------------"
+        )
 
         fun comparePlayers(player1: Int, player2: Int): Int {
             return when {
-                isTrails[player1] && isTrails[player2] -> compareTrails(playerCardsList[player1], playerCardsList[player2])
+                isTrails[player1] && isTrails[player2] -> compareTrails(
+                    playerCardsList[player1],
+                    playerCardsList[player2]
+                )
+
                 isTrails[player1] -> 1
                 isTrails[player2] -> -1
-                isPureSequences[player1] && isPureSequences[player2] -> compareCards(playerCardsList[player1], playerCardsList[player2])
+                isPureSequences[player1] && isPureSequences[player2] -> compareCards(
+                    playerCardsList[player1],
+                    playerCardsList[player2]
+                )
+
                 isPureSequences[player1] -> 1
                 isPureSequences[player2] -> -1
-                isSequences[player1] && isSequences[player2] -> compareCards(playerCardsList[player1], playerCardsList[player2])
+                isSequences[player1] && isSequences[player2] -> compareCards(
+                    playerCardsList[player1],
+                    playerCardsList[player2]
+                )
+
                 isSequences[player1] -> 1
                 isSequences[player2] -> -1
-                isSameSuits[player1] && isSameSuits[player2] -> compareCards(playerCardsList[player1], playerCardsList[player2])
+                isSameSuits[player1] && isSameSuits[player2] -> compareCards(
+                    playerCardsList[player1],
+                    playerCardsList[player2]
+                )
+
                 isSameSuits[player1] -> 1
                 isSameSuits[player2] -> -1
-                isDoublePairs[player1] && isDoublePairs[player2] -> compareCards(playerCardsList[player1], playerCardsList[player2])
+                isDoublePairs[player1] && isDoublePairs[player2] -> compareCards(
+                    playerCardsList[player1],
+                    playerCardsList[player2]
+                )
+
                 isDoublePairs[player1] -> 1
                 isDoublePairs[player2] -> -1
                 else -> compareCards(playerCardsList[player1], playerCardsList[player2])
@@ -393,7 +397,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        Toast.makeText(this, "Player ${winner + 1} wins with score: ${scores[winner]}", Toast.LENGTH_LONG).show()
+        Toast.makeText(
+            this,
+            "Player ${winner + 1} wins with score: ${scores[winner]}",
+            Toast.LENGTH_LONG
+        ).show()
 
         if (winner != -1) {
             playerStatus[winner].text = "Winner"
@@ -403,7 +411,6 @@ class MainActivity : AppCompatActivity() {
 
         return winner
     }
-
 
 
     private fun noStatusBar() {
